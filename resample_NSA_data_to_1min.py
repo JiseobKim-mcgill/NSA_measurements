@@ -19,9 +19,6 @@ Changelog:
 import os
 import netCDF4
 import numpy as np
-#import matplotlib.pyplot as plt
-#import matplotlib.dates as mdates
-#import matplotlib.colors as mcolors
 from datetime import datetime, timedelta
 
 # ===================================================
@@ -334,66 +331,7 @@ def write_to_netcdf(output_path, time, reflectivity, range_data, fill_value, fir
         first_cbh_var[:] = first_cbh
         second_cbh_var[:] = second_cbh
         third_cbh_var[:] = third_cbh
-
-'''
-def plot_kazr_reflectivity(time_kazr, range_kazr, reflectivity_kazr, first_cbh, second_cbh, third_cbh):
-    """
-    Plot the KAZR reflectivity data.
-
-    Args:
-        time_kazr (np.ndarray):         Time [sec]
-        range_kazr (np.ndarray):        Range [m]
-        reflectivity_kazr (np.ndarray): Reflectivity [dBZ]
-        first_cbh (np.ndarray):         First cloud base height [m]
-        second_cbh (np.ndarray):        Second cloud base height [m]
-        third_cbh (np.ndarray):         Third cloud base height [m]
-    """
-    print("\nCreating reflectivity plot...")
-
-    range_kazr = range_kazr / 1000.0
-    time_kazr_mesh, range_kazr_mesh = np.meshgrid(time_kazr, range_kazr, indexing='ij')
-
-    bounds = np.arange(-40, 12, 2)
-    colors = ['#ffffff', '#e6e9f5', '#4153ba', '#314098', '#1d4f96', 
-            '#17826e', '#08a863', '#28b459', '#47b750', '#62bc4e',
-            '#7bc14c', '#a5ce46', '#f5ed4d', '#fae741', '#fdd73d',
-            '#ffc83c', '#fdb63a', '#faa537', '#f79335', '#f68833',
-            '#f47831', '#f26a26', '#e35a28', '#d04428', '#ad2121'] # 25 colors
-    cmap = mcolors.ListedColormap(colors)
-    norm = mcolors.BoundaryNorm(bounds, cmap.N)
-
-    fig, ax = plt.subplots(figsize=(10, 5) ,constrained_layout=True)
-    pcm = ax.pcolormesh(mdates.date2num(time_kazr_mesh), range_kazr_mesh, reflectivity_kazr,
-                        cmap=cmap, norm=norm, shading='nearest', zorder=2) 
-    
-    cbar = plt.colorbar(pcm, ax=ax, orientation='vertical', pad=0.01, boundaries=bounds, ticks=bounds)
-    cbar.set_label('Reflectivity [dBZ]', fontsize=14)
-    cbar.set_ticks([-40, -30, -20, -10, 0, 10])
-
-    ax.set_xlabel('Time (UTC)', fontsize=16)
-    ax.set_ylabel('Height [km]', fontsize=16)
-    ax.tick_params(axis='both', which='major', labelsize=14)
-    locator = mdates.HourLocator(interval=12)
-    ax.xaxis.set_major_locator(locator)
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d %H"))
-
-    ax.set_ylim([-0.2, 10])
-
-    # Add black dots for first_cbh where it is not missing_value
-    missing_value = -9999.0  # Define the missing value
-    valid_indices = first_cbh != missing_value  # Identify valid (non-missing) indices
-    ax.scatter(mdates.date2num(time_kazr[valid_indices]), first_cbh[valid_indices] / 1000.0, 
-                color='black', s=3, zorder=3, label='First CBH')  # Black dots
-    valid_indices = second_cbh != missing_value  # Identify valid (non-missing) indices
-    ax.scatter(mdates.date2num(time_kazr[valid_indices]), second_cbh[valid_indices] / 1000.0, 
-                color='gray', s=3, zorder=3, label='Second CBH')  # Gray dots
-    valid_indices = third_cbh != missing_value  # Identify valid (non-missing) indices
-    ax.scatter(mdates.date2num(time_kazr[valid_indices]), third_cbh[valid_indices] / 1000.0, 
-                color='lightgray', s=3, zorder=3, label='Third CBH')  # Light gray dots
-
-    plt.savefig(f"/home/jskim/projects/ctb-itan/jskim/data/intermediate/Arctic_clouds/Reflectivity_KAZR_test.png", dpi=600)
-    plt.close()
-'''
+        
 
 # ===================================================
 # Main Function
@@ -402,9 +340,9 @@ def main():
     """
     Main function to orchestrate the processing of KAZR and ceilometer data and writing to NetCDF.
     """
-    kazr_file_path = os.path.expanduser('/home/jskim/projects/ctb-itan/jskim/data/raw/NSA/LLC_for_WIVERN/kazrcfrge')
-    ceil_file_path = os.path.expanduser('/home/jskim/projects/ctb-itan/jskim/data/raw/NSA/LLC_for_WIVERN/ceil')
-    output_file_path = os.path.expanduser('/home/jskim/projects/ctb-itan/jskim/data/intermediate/WIVERN/kazr_and_ceil_20231101-20240430.nc')
+    kazr_file_path = os.path.expanduser('/your/kazr/path')
+    ceil_file_path = os.path.expanduser('/your/ceil/path')
+    output_file_path = os.path.expanduser('/your/output/path/kazr_and_ceil_20231101-20240430.nc')
 
     # Read and process KAZR files
     print("\nStarting KAZR data processing...", flush=True)
@@ -422,8 +360,6 @@ def main():
     print("\nProcessed Ceil data:", flush=True)
     print(f"- Total time points: {time_ceil.shape}", flush=True)
     print(f"- CBH shape: {first_cbh.shape}", flush=True)
-
-    #plot_kazr_reflectivity(time_kazr, range_kazr, reflectivity_kazr, first_cbh, second_cbh, third_cbh)
 
     # Write processed data to NetCDF
     print(f"\nWriting {output_file_path}...", flush=True)
